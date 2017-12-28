@@ -1,0 +1,95 @@
+TEST SOLVER
+		Scanner scan = new Scanner(System.in);
+    	int n = scan.nextInt();
+    	int[][] arr = new int[n][n];
+    	for (int i = 0; i < n; i++) {
+    		for (int j = 0; j < n; j++) {
+    			arr[i][j] = scan.nextInt();
+    		}
+    	}
+    	Board startBoard = new Board(arr, 3, null);
+    	System.out.println("Heuristic value: " + startBoard.getHeuristicValue());
+    	if (!startBoard.isSolvable()) {
+    		System.out.println("No solution!");
+    	}
+    	else {
+    		Solver2 solve = new Solver2(startBoard);
+    		System.out.println("Minimum moves: " + solve.moves());
+    		for (Board i: solve.solution()) {
+    			System.out.println(i.toString());
+    		}
+    	}
+    	
+TEST GENERATOR
+Generator gen;
+    	Board startBoard;
+    	Solver2 solve;
+    	for (int i = 2; i <= 10; i++) {
+    		for (int j = 2; j <= 10; j++) {
+    			gen = new Generator(i, j);
+    			startBoard = gen.getGen();
+    			solve = new Solver2(startBoard);
+    			if (j != solve.moves()) {
+    				System.out.println("N = " + i + " genMoves = " + j + " factMoves = " + solve.moves());
+    				System.out.println(startBoard.toString());
+    			}
+    		}
+    	}
+    	
+    	* Some example configurations:
+GET DATA SET
+		final int N = 6;
+		final int left = 30;
+		final int right = 60;
+		final int hType = 2;
+		final int numberOfExp = 32;
+		Generator gen = new Generator();
+    	Board startBoard;
+    	Solver2 solve;
+    	System.out.println("countMoves\t" + "countCheckedVertex\t" + "countCreatedVertex\t" + "time");
+    	for (int i = 6; i <= 6; i++) {
+    		for (int j = 40; j <= 50; j++) {
+    			startBoard = gen.getGen(i, j, hType);
+    			double elapsed = 0;
+    			long countCheckVertex = 0;
+    			long countCreateVertex = 0;
+    			for (int k = 0; k < numberOfExp; k++) {
+        			double sTime = System.currentTimeMillis();
+        			solve = new Solver2(startBoard);
+        			double eTime = System.currentTimeMillis();
+        			elapsed += (eTime - sTime);
+        			countCheckVertex += (long)solve.countCheckVertex;
+        			countCreateVertex += (long)solve.countCreateVertex;
+    			}
+    			elapsed /= numberOfExp;
+    			countCheckVertex /= numberOfExp;
+    			countCreateVertex /= numberOfExp;
+    			System.out.println(j + "\t" + countCheckVertex + "\t" + countCreateVertex + "\t" + elapsed);
+    		}
+    	}
+4
+0 4 2 3
+13 8 7 6
+5 10 11 1
+9 12 15 14 - 52 moves
+
+4      
+12 8 3 13
+10 6 15 2
+4 5 1 9
+11 14 7 0 - 62 moves
+
+1 5 9 13
+2 6 10 14
+3 7 11 15
+4 8 12 0  - 72 moves - difficult!
+ *    0 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 - 78 moves
+ *    0 12 9 13 15 11 10 14 7 8 5 6 4 3 2 1 - 80 moves
+ 
+ 4
+ 0  15 14 13
+ 12 11 10  9
+  8  7  6  5
+  4  3  2  1  - 78 moves
+ 
+ 
